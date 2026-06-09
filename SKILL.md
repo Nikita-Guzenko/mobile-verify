@@ -39,11 +39,13 @@ Station 4 of the mobile-app factory. Input: an Expo/RN app + `user-flows.md`. Ou
 4. **Gate + loop:**
    ```bash
    node "$S/scripts/done-gate.mjs" <app>/.mobile-verify/reports/run.json && echo GREEN || {
-     node "$S/scripts/loop-guard.mjs" <app>/.mobile-verify/state.json false   # exit 0=continue 1=stop
+     # loop-guard reads the report, increments iteration, appends signature, writes state back.
+     node "$S/scripts/loop-guard.mjs" <app>/.mobile-verify/state.json \
+       <app>/.mobile-verify/reports/run.json   # exit 0=continue 1=stop
    }
    ```
    - If GREEN → done.
-   - If loop-guard says **continue:** read `reports/run.md`, fix the code for the failing flows (functional or visual), bump `state.json.iteration` and add `report.signature` to `state.json.failSignatures`, then go to step 3.
+   - If loop-guard says **continue:** read `reports/run.md`, fix the code for the failing flows (functional or visual), then go to step 3. (loop-guard owns state.json — do NOT hand-edit it.)
    - If loop-guard says **stop:** surface `reports/run.md` to the user (cap/circuit-breaker hit) — human gate.
 
 ## Gemini thinking control (visual gate)
