@@ -33,3 +33,13 @@ test('failSignature is stable for same failures', () => {
   assert.equal(failSignature(buildReport(maestro, visual)),
                failSignature(buildReport(maestro, visual)));
 });
+test('flow with no visual entries fails visual gate (never silent-pass)', () => {
+  const r = buildReport(
+    [{ flow: 'a', passed: true, log: '' }],
+    [] // no visual entries for flow 'a'
+  );
+  const flowA = r.flows.find((f) => f.flow === 'a');
+  assert.equal(flowA.visual, false, 'zero screenshots must NOT pass visual gate');
+  assert.ok(flowA.visualIssues.length > 0, 'must record a visual issue when no screenshots');
+  assert.equal(r.allGreen, false, 'allGreen must be false when visual gate unsatisfied');
+});
