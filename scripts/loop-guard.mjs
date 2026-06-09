@@ -9,15 +9,19 @@ import { decide } from '../lib/loop-guard.lib.mjs';
 const [stateFile, reportFile] = process.argv.slice(2);
 const caps = { maxIterations: 6, maxBudgetTokens: 200000, breakerRepeats: 3 };
 
-const state = existsSync(stateFile)
-  ? JSON.parse(readFileSync(stateFile, 'utf8'))
-  : { iteration: 0, budgetTokens: 0, failSignatures: [] };
+const raw = existsSync(stateFile) ? JSON.parse(readFileSync(stateFile, 'utf8')) : {};
+// Default every field — the state file may exist but be empty/partial ({}).
+const state = {
+  iteration: raw.iteration || 0,
+  budgetTokens: raw.budgetTokens || 0,
+  failSignatures: Array.isArray(raw.failSignatures) ? raw.failSignatures : [],
+};
 
 const report = JSON.parse(readFileSync(reportFile, 'utf8'));
 const green = report.allGreen;
 
 // Update state before calling decide so decide sees the post-increment values.
-state.iteration = (state.iteration || 0) + 1;
+state.iteration += 1;
 if (!green) state.failSignatures.push(report.signature);
 
 const d = decide(state, caps, green);

@@ -41,6 +41,20 @@ test('iteration increments across sequential calls', () => {
   assert.equal(readState(stateFile).iteration, 3);
 });
 
+test('handles a pre-existing empty/partial state file ({}) without crashing', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'lgcli-'));
+  const stateFile = join(dir, 'state.json');
+  writeFileSync(stateFile, '{}'); // file EXISTS but has no fields (the real crash case)
+  const reportF = makeReport(dir, false, 'sigE');
+
+  const { rc, out } = run(stateFile, reportF);
+  assert.equal(rc, 0); // continue, not a crash
+  assert.ok(out, 'must print a decision (a crash prints nothing to stdout)');
+  const state = readState(stateFile);
+  assert.equal(state.iteration, 1);
+  assert.deepEqual(state.failSignatures, ['sigE']);
+});
+
 test('failure signatures accumulate when not green', () => {
   const dir = mkdtempSync(join(tmpdir(), 'lgcli-'));
   const stateFile = join(dir, 'state.json');
