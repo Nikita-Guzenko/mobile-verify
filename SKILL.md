@@ -1,6 +1,6 @@
 ---
 name: mobile-verify
-description: Drive an Expo/React Native app to "all user flows pass functionally AND visually" on the iOS simulator, fix-until-green. Generates Maestro flows from user-flows.md, runs them on the simulator, judges screenshots with Gemini vision (hard gate), and loops fixing code until green or caps hit. Triggers on "mobile-verify", "verify the app", "run e2e on the simulator", "fix until green", or station-4 of the mobile app factory. Expo/RN + iOS simulator (v1).
+description: Drive an Expo/React Native app to all-user-flows-pass (functional + visual) on the iOS simulator, fix-until-green — generates Maestro flows from user-flows.md, runs them, judges screenshots with Gemini vision (hard gate), loops fixing code until green. Station 4 of the mobile-app factory. Triggers on "mobile-verify", "verify the app", "run e2e on the simulator", "fix until green".
 ---
 
 # mobile-verify
